@@ -1,0 +1,36 @@
+# Push to master → deploy Ava's tasks to Trigger.dev production.
+# Needs the repo secret TRIGGER_ACCESS_TOKEN (a Trigger.dev personal access token).
+# Without it the workflow still typechecks, then skips the deploy step.
+name: Deploy to Trigger.dev (prod)
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "src/**"
+      - "trigger.config.ts"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - name: Deploy
+        env:
+          TRIGGER_ACCESS_TOKEN: ${{ secrets.TRIGGER_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$TRIGGER_ACCESS_TOKEN" ]; then
+            echo "TRIGGER_ACCESS_TOKEN secret not set: skipping deploy (typecheck passed)."
+            exit 0
+          fi
+          npx trigger.dev@4.7.6 deploy --env prod

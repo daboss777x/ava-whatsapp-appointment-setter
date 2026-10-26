@@ -1,0 +1,244 @@
+<title>Ava Appointment Setter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Kalam:wght@400;700&display=swap">
+<style>
+/* Layout: a whiteboard hung on a wall — one hand-drawn system sketch, sticky notes stuck underneath for the details. Single deliberate light look. */
+:root{
+  --wall:#e4e8ec;
+  --board:#fdfdfc;
+  --frame:#b9bfc6;
+  --ink:#23262b;
+  --blue:#1f4fbf;
+  --green:#1b8a4c;
+  --red:#d2382c;
+  --purple:#6a3fb5;
+  --orange:#d9771f;
+  --sticky:#fff27a;
+  --sticky2:#ffd1e3;
+  --sticky3:#c8f1d4;
+  --hand:"Caveat", "Comic Sans MS", "Bradley Hand", cursive;
+  --note:"Kalam", "Comic Sans MS", "Bradley Hand", cursive;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--wall); color:var(--ink); font-family:var(--note); margin:0;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:1180px; margin:0 auto; padding-block:32px 64px; display:flex; flex-direction:column; gap:28px}
+h1{font-family:var(--hand); font-weight:700; font-size:clamp(2.2rem,5vw,3.2rem); margin:0; line-height:1; color:var(--ink)}
+h1 span{color:var(--blue)}
+
+.board-shell{background:var(--frame); padding:12px; border-radius:8px; box-shadow:0 18px 40px -20px rgba(30,40,60,.45), inset 0 1px 0 rgba(255,255,255,.6)}
+.board{
+  background:
+    radial-gradient(ellipse 40% 25% at 20% 30%, rgba(120,140,170,.06), transparent 70%),
+    radial-gradient(ellipse 30% 20% at 80% 75%, rgba(120,140,170,.07), transparent 70%),
+    var(--board);
+  border-radius:3px; overflow-x:auto;
+}
+.board svg{display:block; width:100%; min-width:880px; height:auto}
+.tray{height:14px; margin:0 6% ; background:linear-gradient(#cfd4da,#a9b0b8); border-radius:0 0 8px 8px; position:relative}
+.tray i{position:absolute; top:-6px; height:9px; width:70px; border-radius:4px}
+.tray i:nth-child(1){left:12%; background:var(--blue)}
+.tray i:nth-child(2){left:22%; background:var(--red); width:62px}
+.tray i:nth-child(3){left:31%; background:var(--ink); width:66px}
+.tray i:nth-child(4){right:14%; background:#f4f4f4; width:56px; height:12px; top:-9px; border:1px solid #bbb}
+
+.notes{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:26px; padding:10px 6px 0}
+.note{background:var(--sticky); padding:18px 20px 22px; box-shadow:0 10px 18px -12px rgba(0,0,0,.45); font-size:1rem; line-height:1.45; transform:rotate(-1.2deg)}
+.note:nth-child(2){background:var(--sticky2); transform:rotate(1deg)}
+.note:nth-child(3){background:var(--sticky3); transform:rotate(-.6deg)}
+.note h2{font-family:var(--hand); font-size:1.75rem; margin:0 0 6px; line-height:1}
+.note ul{margin:0; padding-left:18px; display:flex; flex-direction:column; gap:4px}
+@media (prefers-reduced-motion:reduce){ .note{transform:none} }
+</style>
+
+<div class="wrap">
+  <h1>Ava <span>· WhatsApp appointment setter</span></h1>
+
+  <div>
+    <div class="board-shell">
+      <div class="board">
+        <svg id="board" viewBox="0 0 1200 800" role="img" aria-label="Hand-drawn system map: customer texts WhatsApp, the Supabase doorman passes it to Ava on Trigger.dev, Ava thinks with OpenAI, books in Google Calendar, saves to Supabase, and the owner watches in a Next.js inbox."></svg>
+      </div>
+    </div>
+    <div class="tray"><i></i><i></i><i></i><i></i></div>
+  </div>
+
+  <div class="notes">
+    <div class="note">
+      <h2>Heads up</h2>
+      <ul>
+        <li>WhatsApp can't reach Trigger.dev directly, so we add the doorman</li>
+        <li>OpenAI tools need the Responses API</li>
+        <li>Google "testing" logins expire after 7 days</li>
+      </ul>
+    </div>
+    <div class="note">
+      <h2>To confirm</h2>
+      <ul>
+        <li>Business: Northbeam Advisory</li>
+        <li>Agent: Ava</li>
+        <li>Mon–Fri 9–5 ET · 30-min Meet slots</li>
+        <li>Record on Trigger.dev dev</li>
+      </ul>
+    </div>
+    <div class="note">
+      <h2>Cost</h2>
+      <ul>
+        <li>Everything free</li>
+        <li>OpenAI ≈ $0.25 for all testing</li>
+        <li>Swap to gpt-6.1-sol with one setting</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js"></script>
+<script>
+(function(){
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("board");
+  var rc = window.rough ? rough.svg(svg) : null;
+  var C = {ink:"#23262b", blue:"#1f4fbf", green:"#1b8a4c", red:"#d2382c", purple:"#6a3fb5", orange:"#d9771f", grey:"#6b7178"};
+  var seed = 7;
+
+  function o(extra){
+    var base = {stroke:C.ink, strokeWidth:2.4, roughness:1.4, bowing:1.2, seed:seed++};
+    for (var k in extra) base[k] = extra[k];
+    return base;
+  }
+  function el(tag, attrs){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); svg.appendChild(e); return e; }
+  function put(g){ svg.appendChild(g); return g; }
+
+  // shapes (rough when available, plain SVG otherwise)
+  function rect(cx, cy, w, h, opt){
+    if (rc) return put(rc.rectangle(cx - w/2, cy - h/2, w, h, o(opt)));
+    return el("rect", {x:cx-w/2, y:cy-h/2, width:w, height:h, rx:10, fill:opt && opt.fill ? opt.fill : "none", "fill-opacity":.25, stroke:(opt&&opt.stroke)||C.ink, "stroke-width":2.4});
+  }
+  function ellipse(cx, cy, w, h, opt){
+    if (rc) return put(rc.ellipse(cx, cy, w, h, o(opt)));
+    return el("ellipse", {cx:cx, cy:cy, rx:w/2, ry:h/2, fill:opt && opt.fill ? opt.fill : "none", "fill-opacity":.25, stroke:(opt&&opt.stroke)||C.ink, "stroke-width":2.4});
+  }
+  function path(d, opt){
+    if (rc) return put(rc.path(d, o(opt)));
+    return el("path", {d:d, fill:"none", stroke:(opt&&opt.stroke)||C.ink, "stroke-width":(opt&&opt.strokeWidth)||2.4, "stroke-dasharray":opt&&opt.strokeLineDash ? opt.strokeLineDash.join(" ") : ""});
+  }
+  function line(x1,y1,x2,y2,opt){ return path("M"+x1+" "+y1+" L"+x2+" "+y2, opt); }
+
+  function text(x, y, s, opt){
+    opt = opt || {};
+    var t = el("text", {x:x, y:y, "text-anchor":opt.anchor||"middle", fill:opt.color||C.ink,
+      "font-family":opt.family||"Caveat, 'Comic Sans MS', cursive", "font-size":opt.size||22, "font-weight":opt.weight||500});
+    String(s).split("\n").forEach(function(l, i){
+      var ts = document.createElementNS(NS, "tspan"); ts.setAttribute("x", x); if (i) ts.setAttribute("dy", (opt.size||22)*1.05); ts.textContent = l; t.appendChild(ts);
+    });
+    if (opt.rotate) t.setAttribute("transform", "rotate("+opt.rotate+" "+x+" "+y+")");
+    return t;
+  }
+  function title(x, y, main, sub, color){
+    text(x, y, main, {size:32, weight:700, color:color||C.ink});
+    if (sub) text(x, y + 24, sub, {size:19, color:C.grey});
+  }
+
+  // arrow along a quadratic curve, with a hand-drawn head
+  function arrow(x1, y1, x2, y2, opt){
+    opt = opt || {};
+    var bend = opt.bend || 0;
+    var mx = (x1+x2)/2, my = (y1+y2)/2, dx = x2-x1, dy = y2-y1, len = Math.hypot(dx,dy) || 1;
+    var cx = mx - dy/len*bend, cy = my + dx/len*bend;
+    var col = opt.color || C.ink;
+    var po = {stroke:col, strokeWidth:opt.width||2.2, roughness:1.1};
+    if (opt.dashed) po.strokeLineDash = [9, 7];
+    path("M"+x1+" "+y1+" Q"+cx+" "+cy+" "+x2+" "+y2, po);
+    var ax = x2-cx, ay = y2-cy, al = Math.hypot(ax,ay) || 1; ax/=al; ay/=al;
+    var s = 15, sp = 0.45;
+    var hx1 = x2 - s*(ax*Math.cos(sp) - ay*Math.sin(sp)), hy1 = y2 - s*(ay*Math.cos(sp) + ax*Math.sin(sp));
+    var hx2 = x2 - s*(ax*Math.cos(-sp) - ay*Math.sin(-sp)), hy2 = y2 - s*(ay*Math.cos(-sp) + ax*Math.sin(-sp));
+    path("M"+hx1+" "+hy1+" L"+x2+" "+y2+" L"+hx2+" "+hy2, {stroke:col, strokeWidth:opt.width||2.2, roughness:.6});
+    if (opt.label){
+      var lx = opt.lx != null ? opt.lx : (x1+2*cx+x2)/4, ly = opt.ly != null ? opt.ly : (y1+2*cy+y2)/4;
+      text(lx, ly, opt.label, {size:23, color:col, weight:700, anchor:opt.anchor});
+    }
+  }
+  // red marker annotation with a little squiggle pointer
+  function note(x, y, s, px, py, anchor){
+    text(x, y, s, {size:22, color:C.red, weight:700, anchor:anchor||"middle"});
+    if (px != null) path("M"+(anchor==="start"?x-8:x)+" "+(y-24)+" Q"+((x+px)/2+10)+" "+((y+py)/2-14)+" "+px+" "+py, {stroke:C.red, strokeWidth:1.6, roughness:1.6});
+  }
+
+  // ───────── nodes ─────────
+  // Customer phone
+  rect(110, 150, 74, 124, {stroke:C.ink, fill:"#9fb3d9", fillStyle:"hachure", hachureGap:9, fillWeight:1});
+  line(96, 200, 124, 200, {strokeWidth:2});
+  text(110, 248, "Customer", {size:30, weight:700});
+
+  // WhatsApp
+  ellipse(360, 150, 210, 100, {stroke:C.green, strokeWidth:3, fill:"#bfe8cf", fillStyle:"hachure", hachureGap:10});
+  title(360, 148, "WhatsApp", "Meta test number", C.green);
+
+  // Doorman (Edge Function)
+  rect(360, 400, 210, 96, {stroke:C.ink, strokeWidth:2.6});
+  path("M 438 368 l 9 10 l 18 -22", {stroke:C.green, strokeWidth:3, roughness:.8});
+  title(352, 398, "Doorman", "Supabase Edge Function");
+
+  // Handbook
+  rect(670, 120, 220, 84, {stroke:C.orange, strokeWidth:2.6, fill:"#ffe1bf", fillStyle:"hachure", hachureGap:11});
+  line(578, 82, 578, 158, {stroke:C.orange, strokeWidth:2});
+  title(680, 118, "Handbook", "knowledge · voice · rules", C.orange);
+
+  // Ava — the hub
+  ellipse(670, 400, 290, 170, {stroke:C.blue, strokeWidth:4, fill:"#c9d8ff", fillStyle:"hachure", hachureGap:8});
+  ellipse(670, 400, 306, 184, {stroke:C.blue, strokeWidth:1.4, roughness:2});
+  text(670, 398, "Ava", {size:52, weight:700, color:C.blue});
+  text(670, 428, "Trigger.dev agent", {size:21, color:C.grey});
+
+  // Brain
+  ellipse(1030, 230, 220, 120, {stroke:C.purple, strokeWidth:3, fill:"#e2d6fb", fillStyle:"hachure", hachureGap:10});
+  [[930,160,912,145],[1030,160,1030,140],[1128,165,1146,148]].forEach(function(p){ line(p[0],p[1],p[2],p[3],{stroke:C.purple, strokeWidth:2}); });
+  title(1030, 228, "Brain", "OpenAI gpt-6-luna", C.purple);
+
+  // Calendar
+  rect(1030, 575, 210, 120, {stroke:C.green, strokeWidth:2.8});
+  line(925, 545, 1135, 545, {stroke:C.green, strokeWidth:2});
+  line(985, 506, 985, 526, {stroke:C.green, strokeWidth:3}); line(1075, 506, 1075, 526, {stroke:C.green, strokeWidth:3});
+  rect(1095, 605, 46, 28, {stroke:C.green, fill:C.green, fillStyle:"cross-hatch", hachureGap:6, strokeWidth:1.6});
+  title(1015, 590, "Calendar", "Google + Meet link", C.green);
+
+  // Notebook (database cylinder)
+  ellipse(670, 615, 230, 34, {stroke:C.ink, strokeWidth:2.6, fill:"#d9dde3", fillStyle:"solid"});
+  line(555, 615, 555, 715, {strokeWidth:2.6}); line(785, 615, 785, 715, {strokeWidth:2.6});
+  path("M 555 715 A 115 17 0 0 0 785 715", {strokeWidth:2.6});
+  title(670, 670, "Notebook", "Supabase");
+
+  // Owner's inbox (monitor)
+  rect(250, 650, 230, 120, {stroke:C.ink, strokeWidth:2.6});
+  line(250, 710, 250, 735, {strokeWidth:2.6}); line(205, 737, 295, 737, {strokeWidth:2.6});
+  rect(330, 612, 34, 18, {stroke:C.red, fill:C.red, fillStyle:"solid", strokeWidth:1.4});
+  title(250, 650, "Owner's inbox", "Next.js · localhost");
+
+  // ───────── arrows ─────────
+  arrow(152, 128, 252, 128, {label:"texts", ly:112});
+  arrow(255, 178, 152, 178, {label:"reply", ly:206, color:C.green});
+  arrow(360, 202, 360, 348, {label:"new message!", lx:372, ly:285, anchor:"start"});
+  arrow(468, 400, 520, 400, {label:"wake", lx:494, ly:384});
+  arrow(670, 165, 670, 312, {label:"read every turn", lx:684, ly:248, anchor:"start", color:C.orange});
+  arrow(800, 350, 920, 268, {label:"thinks", bend:-12, color:C.purple});
+  arrow(800, 452, 922, 538, {label:"check · book\nmove · cancel", bend:12, lx:872, ly:530, anchor:"middle", color:C.green});
+  arrow(670, 488, 670, 592, {label:"saves", lx:684, ly:548, anchor:"start"});
+  arrow(552, 640, 370, 640, {label:"live", ly:626});
+  arrow(370, 690, 552, 690, {label:"take over", ly:712, color:C.red, dashed:true});
+  arrow(560, 330, 466, 168, {bend:-50, label:"reply", lx:470, ly:265, color:C.green});
+
+  // ───────── annotations ─────────
+  note(865, 410, "1 chat per\ncustomer", null, null, "start");
+  note(520, 520, "waits 6s → 3 texts = 1 reply", 590, 470);
+  note(360, 488, "says \"got it\" in < 1 sec");
+  note(1030, 330, "max 6 steps, then stops");
+  note(1030, 678, "re-checks before booking");
+  note(670, 770, "remembers every customer");
+  note(250, 775, "needs a human? → AI pauses", null, null);
+})();
+</script>

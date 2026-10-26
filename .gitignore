@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.local
+.trigger/
+.DS_Store
+dashboard/.next/
+dashboard/node_modules/
+dashboard/.env.local
+supabase/.temp/

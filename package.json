@@ -1,0 +1,25 @@
+{
+  "name": "ava-appointment-setter",
+  "version": "1.0.0",
+  "description": "Ava: an AI WhatsApp appointment setter that answers questions and books Google Meet calls, built on Trigger.dev, OpenAI, Supabase and Google Calendar",
+  "scripts": {
+    "dev": "trigger.dev dev",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "@trigger.dev/sdk": "^4.7.6",
+    "openai": "^7.39.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@trigger.dev/build": "^4.7.6",
+    "@types/node": "^26.6.5",
+    "trigger.dev": "^4.7.6",
+    "typescript": "^5.9.3"
+  }
+}
